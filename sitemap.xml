@@ -3,15 +3,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-    <loc>https://tool-box-pro-mu.vercel.app/</loc>
+<loc>https://tool-box-pro-mu.vercel.app/</loc>
 </url>
 
 <url>
-    <loc>https://tool-box-pro-mu.vercel.app/auth.html</loc>
+<loc>https://tool-box-pro-mu.vercel.app/auth.html</loc>
 </url>
 
 <url>
-    <loc>https://tool-box-pro-mu.vercel.app/dashboard.html</loc>
+<loc>https://tool-box-pro-mu.vercel.app/dashboard.html</loc>
 </url>
 
 </urlset>
