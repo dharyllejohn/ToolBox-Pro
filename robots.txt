@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tool-box-pro-mu.vercel.app/sitemap.xml
