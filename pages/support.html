@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Center</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/support.css">
+</head>
+<body>
+
+<div class="support-container">
+
+    <h1>🛟 Support Center</h1>
+    <p>Need help? Create a support ticket.</p>
+
+    <form id="ticketForm">
+
+        <label>Category</label>
+
+        <select id="category">
+
+            <option>Payment</option>
+
+            <option>Bug Report</option>
+
+            <option>Suggestion</option>
+
+            <option>Account</option>
+
+            <option>Other</option>
+
+        </select>
+
+        <label>Subject</label>
+
+        <input
+            type="text"
+            id="subject"
+            placeholder="Enter subject..."
+            required
+        >
+
+        <label>Message</label>
+
+        <textarea
+            id="message"
+            rows="7"
+            placeholder="Describe your concern..."
+            required
+        ></textarea>
+
+        <button type="submit">
+
+            Submit Ticket
+
+        </button>
+
+    </form>
+
+</div>
+
+<script src="../config.js"></script>
+<script src="../js/support.js"></script>
+
+</body>
+</html>

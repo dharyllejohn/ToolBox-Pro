@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolBox Pro</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="utils.js"></script>
+
+<script>
+console.log("SUPABASE CLIENT:", supabaseClient);
+</script>
+<style>
+.locked{
+  opacity:.4;
+  pointer-events:none;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<header class="glass">
+
+<h1>🧰 ToolBox Pro</h1>
+
+<div>
+
+<span id="userBadge"
+style="display:none;margin-right:10px;">
+</span>
+
+
+<button id="loginBtn"
+onclick="location.href='auth.html'">
+Login
+</button>
+
+
+
+<button id="dashboardBtn"
+onclick="location.href='dashboard.html'"
+style="display:none">
+👤 Dashboard
+</button>
+
+
+
+<button id="logoutBtn"
+onclick="logout()"
+style="display:none">
+Logout
+</button>
+
+
+
+<button id="upgradeBtn" onclick="location.href='pages/upgrade.html'">
+⭐ Upgrade PRO
+</button>
+
+
+</div>
+
+</div>
+
+<p id="status">Checking user...</p>
+
+<p>Free & Pro Developer Tools</p>
+
+</header>
+
+<main>
+
+<section>
+
+<h2>🟢 Free Tools</h2>
+
+<div class="grid">
+
+<div class="card"
+onclick="location.href='pages/image-compressor.html'">
+🖼️ Image Compressor
+</div>
+
+<div class="card"
+onclick="location.href='pages/image-resizer.html'">
+📏 Image Resizer
+</div>
+
+<div class="card"
+onclick="location.href='pages/text-tools.html'">
+📝 Text Tools
+</div>
+
+<div class="card"
+onclick="location.href='pages/calculator.html'">
+🧮 Calculator
+</div>
+
+<div class="card"
+onclick="location.href='pages/pdf-tools.html'">
+📄 PDF Tools
+</div>
+
+</div>
+
+</section>
+
+<section>
+
+<h2>🔥 PRO Tools</h2>
+
+<div class="grid">
+
+<div class="card" onclick="location.href='./pages/json-formatter.html'">
+🔐 JSON Formatter
+</div>
+
+<div class="card" onclick="location.href='./pages/base64-tool.html'">
+🔑 Base64 Tool
+</div>
+
+<div class="card" onclick="location.href='./pages/api-tester.html'">
+⚡ API Tester
+</div>
+
+<div class="card" onclick="location.href='./pages/ai-resume-analyzer.html'">
+🤖 AI Resume Analyzer
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer class="footer">
+Created by: Daryl John
+</footer>
+
+<script>
+
+
+function lockProTools() {
+  document.querySelectorAll(".card").forEach(card => {
+    const text = card.innerText.toLowerCase();
+
+    if (
+    text.includes("json") ||
+    text.includes("base64") ||
+    text.includes("api tester") ||
+    text.includes("ai resume")
+) {
+      card.classList.add("locked");
+      card.style.opacity = "0.4";
+      card.style.pointerEvents = "none";
+    }
+  });
+}
+
+function unlockProTools() {
+  document.querySelectorAll(".card.locked").forEach(card => {
+    card.classList.remove("locked");
+    card.style.opacity = "1";
+    card.style.pointerEvents = "auto";
+  });
+}
+
+async function checkUser() {
+
+    try {
+
+        const status = document.getElementById("status");
+        const loginBtn = document.getElementById("loginBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const dashboardBtn = document.getElementById("dashboardBtn");
+        const userBadge = document.getElementById("userBadge");
+        const upgradeBtn = document.getElementById("upgradeBtn");
+
+        const { data: { user }, error: authError } =
+            await supabaseClient.auth.getUser();
+
+        if (authError || !user) {
+
+    lockProTools();
+
+    status.innerText = "🆓 Free User";
+
+    loginBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    dashboardBtn.style.display = "none";
+    userBadge.style.display = "none";
+    upgradeBtn.style.display = "inline-block";
+
+    return;
+}
+
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    dashboardBtn.style.display = "inline-block";
+
+    userBadge.style.display = "inline-block";
+    userBadge.innerText = "👤 " + user.email;
+
+    status.innerText = "👋 Welcome, " + user.email;
+
+    const { data: profile, error } = await supabaseClient
+      .from(PROFILE_TABLE)
+      .select("is_pro, pro_expire")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error || !profile) {
+    lockProTools();
+    upgradeBtn.style.display = "inline-block";
+    return;
+}
+
+    if (profile.is_pro === true) {
+      upgradeBtn.style.display = "none";
+      unlockProTools();
+      userBadge.innerText = "⭐ PRO USER";
+      status.innerText = "🔥 PRO USER | " + user.email;
+        } else {
+
+        lockProTools();
+
+        upgradeBtn.style.display = "inline-block";
+
+    }
+
+} catch (err) {
+
+    console.error(err);
+
+    document.getElementById("status").innerText = "Error";
+
+    lockProTools();
+
+}
+
+}
+
+async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    location.href = LOGIN_PAGE;
+
+}
+
+window.addEventListener("DOMContentLoaded", checkUser);
+
+</script>
+
+</body>
+</html>

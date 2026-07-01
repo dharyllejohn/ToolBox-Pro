@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ToolBox Pro Payment</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#7c3aed);
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+}
+
+.card{
+width:450px;
+background:rgba(255,255,255,.1);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:20px;
+text-align:center;
+}
+
+.price{
+font-size:40px;
+font-weight:bold;
+color:#38bdf8;
+margin:20px;
+}
+
+li{
+list-style:none;
+margin:10px;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:15px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-size:16px;
+}
+
+.gc{
+background:#22c55e;
+color:white;
+}
+
+</style>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=AfYHOkRpt-wDrC8pMqMxUWLBMQvW81oJnO6azAN_UXXGy-nwfJG0PVI84rqL10t5tLd4XGhFHJmu1dY8&currency=PHP"></script>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>🚀 Upgrade to PRO</h1>
+
+<div class="price">
+₱199 / Month
+</div>
+
+<ul>
+<li>✅ JSON Formatter</li>
+<li>✅ Base64 Tool</li>
+<li>✅ AI Resume Analyzer</li>
+<li>✅ Unlimited Usage</li>
+</ul>
+
+<h3>Choose Payment</h3>
+
+<div id="paypal-button-container"></div>
+
+<button
+class="gc"
+onclick="location.href='manual-payment.html'">
+📱 GCash / Maya
+</button>
+
+</div>
+
+<script src="../config.js"></script>
+<script src="../payment.js"></script>
+
+</body>
+</html>

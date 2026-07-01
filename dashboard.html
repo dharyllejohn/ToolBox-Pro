@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ToolBox Dashboard</title>
+
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+
+body{
+
+min-height:100vh;
+
+background:
+linear-gradient(-45deg,#0f172a,#1e3a8a,#7c3aed,#0ea5e9);
+
+background-size:400% 400%;
+
+animation:bg 12s ease infinite;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+color:white;
+
+}
+
+
+@keyframes bg{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
+}
+
+
+
+.card{
+
+width:450px;
+
+padding:35px;
+
+border-radius:25px;
+
+background:rgba(255,255,255,.12);
+
+backdrop-filter:blur(20px);
+
+box-shadow:0 20px 50px rgba(0,0,0,.4);
+
+text-align:center;
+
+}
+
+
+
+h1{
+
+font-size:30px;
+
+margin-bottom:25px;
+
+}
+
+
+
+.badge{
+
+display:inline-block;
+
+padding:8px 18px;
+
+border-radius:30px;
+
+background:#facc15;
+
+color:#111;
+
+font-weight:bold;
+
+margin-bottom:20px;
+
+}
+
+
+
+.info{
+
+background:rgba(255,255,255,.12);
+
+padding:18px;
+
+border-radius:15px;
+
+margin:12px 0;
+
+}
+
+
+
+.label{
+
+font-size:13px;
+
+opacity:.8;
+
+}
+
+
+
+.value{
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-top:5px;
+
+}
+
+
+
+button{
+
+width:100%;
+
+padding:14px;
+
+margin-top:15px;
+
+border:none;
+
+border-radius:12px;
+
+font-size:16px;
+
+cursor:pointer;
+
+background:#2563eb;
+
+color:white;
+
+transition:.3s;
+
+}
+
+
+button:hover{
+
+transform:translateY(-3px);
+
+background:#1d4ed8;
+
+}
+
+
+.logout{
+
+background:#dc2626;
+
+}
+
+
+.logout:hover{
+
+background:#b91c1c;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+
+<h1>
+🚀 ToolBox Dashboard
+</h1>
+
+
+
+<div id="badge" class="badge">
+Loading...
+</div>
+
+
+
+<div class="info">
+
+<div class="label">
+Account
+</div>
+
+<div class="value" id="email">
+Loading...
+</div>
+
+</div>
+
+
+
+
+<div class="info">
+
+<div class="label">
+Current Plan
+</div>
+
+<div class="value" id="plan">
+Loading...
+</div>
+
+</div>
+
+
+
+
+<div class="info">
+
+<div class="label">
+Expiration
+</div>
+
+<div class="value" id="expire">
+Loading...
+</div>
+
+</div>
+
+
+
+
+<div class="info">
+
+<div class="label">
+Status
+</div>
+
+<div class="value" id="status">
+Loading...
+</div>
+
+</div>
+
+
+
+<!-- NOTIFICATION -->
+
+<div class="info">
+
+<div class="label">
+Notifications
+</div>
+
+<div class="value" id="notification">
+No new messages
+</div>
+
+</div>
+
+
+
+
+<button onclick="goTools()">
+
+🛠 Open Tools
+
+</button>
+
+
+
+
+<button onclick="location.href='pages/resume-history.html'">
+
+📄 Resume History
+
+</button>
+
+
+
+
+<button class="logout" onclick="logout()">
+
+Logout
+
+</button>
+
+
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="utils.js"></script>
+
+
+
+<script>
+
+async function loadDashboard() {
+
+    const { data: { user }, error } =
+        await supabaseClient.auth.getUser();
+
+    if (error || !user) {
+        location.href = LOGIN_PAGE;
+        return;
+    }
+
+    document.getElementById("email").innerText = user.email;
+
+    // PROFILE
+    console.log("========== DEBUG ==========");
+console.log("Logged User ID:", user.id);
+console.log("Logged Email:", user.email);
+
+const { data: profile, error: profileError } =
+    await supabaseClient
+        .from(PROFILE_TABLE)
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
+console.log("Profile:", profile);
+console.log("Profile Error:", profileError);
+
+if (!profile) {
+    alert("Profile not found for this account.");
+    return;
+}
+
+    if (profile.is_pro) {
+
+        document.getElementById("badge").innerText =
+            "⭐ PRO MEMBER";
+
+        document.getElementById("plan").innerText =
+            "🚀 PRO ACTIVE";
+
+        document.getElementById("status").innerText =
+            "✅ Active";
+
+        if (profile.pro_expire) {
+
+            const expire = new Date(profile.pro_expire);
+            const today = new Date();
+
+            const days = Math.ceil(
+                (expire - today) / (1000 * 60 * 60 * 24)
+            );
+
+            document.getElementById("expire").innerText =
+                expire.toDateString() +
+                " (" + days + " days left)";
+
+        } else {
+
+            document.getElementById("expire").innerText =
+                "No expiration";
+
+        }
+
+    } else {
+
+        document.getElementById("badge").innerText =
+            "🆓 FREE MEMBER";
+
+        document.getElementById("plan").innerText =
+            "Free";
+
+        document.getElementById("status").innerText =
+            "Upgrade to unlock PRO";
+
+        document.getElementById("expire").innerText =
+            "No subscription";
+
+    }
+
+    // NOTIFICATIONS
+    const { data: notes } =
+        await supabaseClient
+            .from(NOTIFICATION_TABLE)
+            .select("*")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(1);
+
+    if (notes && notes.length > 0) {
+
+        document.getElementById("notification").innerText =
+            notes[0].message;
+
+    }
+
+}
+
+function goTools() {
+    location.href = HOME_PAGE;
+}
+
+loadDashboard();
+
+</script>
+
+
+
+</body>
+
+</html>

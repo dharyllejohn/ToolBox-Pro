@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ToolBox Admin Panel</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#7c3aed);
+padding:30px;
+color:white;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+#payments{
+max-width:900px;
+margin:auto;
+}
+
+.card{
+background:rgba(255,255,255,.1);
+backdrop-filter:blur(15px);
+padding:20px;
+border-radius:18px;
+margin-bottom:20px;
+}
+
+.card h2{
+margin-bottom:10px;
+}
+
+.card p{
+margin:6px 0;
+}
+
+img{
+width:250px;
+max-width:100%;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:15px;
+}
+
+.buttons{
+margin-top:15px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+margin-right:10px;
+color:white;
+}
+
+.approve{
+background:#16a34a;
+}
+
+.reject{
+background:#dc2626;
+}
+
+.refresh{
+background:#2563eb;
+display:block;
+margin:0 auto 25px auto;
+}
+
+.empty{
+text-align:center;
+opacity:.8;
+padding:30px;
+}
+
+</style>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Config -->
+<script src="../config.js"></script>
+
+</head>
+
+<body>
+
+<h1>
+🛠 ToolBox Admin Panel
+</h1>
+
+<button
+class="refresh"
+id="refreshBtn">
+🔄 Refresh
+</button>
+
+<div id="payments">
+
+<div class="empty">
+
+Loading pending payments...
+
+</div>
+
+</div>
+
+<!-- Admin Logic -->
+<script src="../admin.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Upgrade PRO</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#7c3aed);
+color:white;
+}
+
+.card{
+width:420px;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(15px);
+padding:30px;
+border-radius:20px;
+}
+
+h1{
+text-align:center;
+margin-bottom:15px;
+}
+
+.price{
+text-align:center;
+font-size:32px;
+font-weight:bold;
+margin-bottom:20px;
+color:#38bdf8;
+}
+
+.info{
+background:rgba(255,255,255,.08);
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+line-height:1.8;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:5px;
+}
+
+input,
+select{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+}
+
+button{
+width:100%;
+padding:13px;
+margin-top:20px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+#msg{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>🚀 Upgrade PRO</h1>
+
+<div class="price">
+₱199 / Month
+</div>
+
+<div class="info">
+
+<h3 style="text-align:center;">📱 Scan GCash QR</h3>
+
+<img
+src="../images/gcash-qr.jpg"
+alt="GCash QR"
+style="
+width:250px;
+display:block;
+margin:15px auto;
+border-radius:15px;
+box-shadow:0 0 20px rgba(255,255,255,.2);
+">
+
+<p style="text-align:center;font-size:18px;">
+Amount:
+<b style="color:#38bdf8;">₱199.00</b>
+</p>
+
+<p style="text-align:center;font-size:14px;opacity:.8;line-height:1.8;">
+
+1️⃣ Scan the QR Code using GCash.<br>
+
+2️⃣ Pay exactly <b>₱199.00</b>.<br>
+
+3️⃣ Copy the Reference Number.<br>
+
+4️⃣ Upload your payment screenshot.<br>
+
+5️⃣ Click <b>Submit Payment</b>.<br>
+
+6️⃣ Wait for admin approval.
+
+</p>
+
+</div>
+
+<label>Payment Method</label>
+
+<input
+id="method"
+value="GCash"
+readonly>
+
+<label>Reference Number</label>
+
+<input
+id="reference"
+placeholder="Reference Number">
+
+<label>Upload Screenshot</label>
+
+<input
+type="file"
+id="proof"
+accept="image/*">
+
+<button id="submitBtn" onclick="submitPayment()">
+Submit Payment
+</button>
+
+<p id="msg"></p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../config.js"></script>
+
+<script>
+
+async function submitPayment() {
+
+    const btn = document.getElementById("submitBtn");
+    const msg = document.getElementById("msg");
+
+    btn.disabled = true;
+    btn.innerText = "Uploading...";
+
+    msg.innerHTML = "";
+    msg.style.color = "white";
+
+    try {
+
+        const { data: { user } } =
+            await supabaseClient.auth.getUser();
+
+        if (!user) {
+
+            alert("Please login first.");
+            window.location.href = "../auth.html";
+
+            return;
+        }
+
+        const method =
+            document.getElementById("method").value;
+
+        const reference =
+            document.getElementById("reference").value.trim();
+
+        const file =
+            document.getElementById("proof").files[0];
+
+        if (!reference || !file) {
+
+            msg.style.color = "#ff8080";
+            msg.innerHTML =
+                "Please complete all fields.";
+
+            return;
+        }
+
+        // Limit to 5MB
+        if (file.size > 5 * 1024 * 1024) {
+
+            msg.style.color = "#ff8080";
+            msg.innerHTML =
+                "Image must be below 5MB.";
+
+            return;
+        }
+
+        const allowed = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        if (!allowed.includes(file.type)) {
+
+            msg.style.color = "#ff8080";
+            msg.innerHTML =
+                "Only JPG, PNG or WEBP images are allowed.";
+
+            return;
+        }
+
+        const fileName =
+            user.id +
+            "_" +
+            Date.now() +
+            "_" +
+            file.name;
+
+        const { error: uploadError } =
+            await supabaseClient.storage
+                .from("payment-screenshots")
+                .upload(fileName, file);
+
+        if (uploadError)
+            throw uploadError;
+
+        const { data: urlData } =
+            supabaseClient.storage
+                .from("payment-screenshots")
+                .getPublicUrl(fileName);
+
+        console.log("Before insert...");
+
+const { data: insertedData, error } = await supabaseClient
+    .from("payment_requests")
+    .insert({
+        user_id: user.id,
+        email: user.email,
+        method: method,
+        reference_number: reference,
+        screenshot: urlData.publicUrl,
+        status: "pending"
+    })
+    .select();
+
+console.log("Inserted Data:", insertedData);
+console.log("Insert Error:", error);
+
+if (error) throw error;
+
+        msg.style.color = "#22c55e";
+
+        msg.innerHTML =
+            "✅ Payment submitted successfully! Please wait for admin approval.";
+
+        document.getElementById("reference").value = "";
+        document.getElementById("proof").value = "";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        msg.style.color="#ff8080";
+        msg.innerHTML=err.message;
+
+    }
+
+    finally{
+
+        btn.disabled=false;
+        btn.innerText="Submit Payment";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

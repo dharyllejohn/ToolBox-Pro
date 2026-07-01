@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Payment Requests</title>
+
+<style>
+
+body{
+font-family:Arial;
+padding:30px;
+background:#111827;
+color:white;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:12px;
+border:1px solid #444;
+text-align:left;
+}
+
+img{
+width:120px;
+border-radius:8px;
+}
+
+button{
+padding:8px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#22c55e;
+color:white;
+}
+
+</style>
+
+</head>
+<body>
+
+<h2>Pending Payments</h2>
+
+<table>
+
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Method</th>
+      <th>Reference</th>
+      <th>Screenshot</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody id="payments"></tbody>
+
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="admin.js"></script>
+
+</body>
+</html>

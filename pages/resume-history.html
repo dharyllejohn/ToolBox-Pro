@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume History</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#7c3aed);
+color:white;
+padding:30px;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+.card{
+background:rgba(255,255,255,.1);
+backdrop-filter:blur(15px);
+padding:20px;
+margin-bottom:15px;
+border-radius:15px;
+}
+
+.score{
+font-size:24px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>📄 Resume Analysis History</h1>
+
+<div id="history">
+Loading...
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const supabaseUrl =
+"https://fdttfybluvhxrceakzkb.supabase.co";
+
+const supabaseKey =
+"sb_publishable_FlL1VjQATQZEsXdZzQRpvA_WcXqI1AF";
+
+const client =
+supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
+
+async function loadHistory(){
+
+const {data:{user}} =
+await client.auth.getUser();
+
+if(!user){
+
+window.location.href="../auth.html";
+return;
+
+}
+
+const {data,error} =
+await client
+.from("resume_history")
+.select("*")
+.eq("user_id", user.id)
+.order("created_at",{ascending:false});
+
+if(error){
+
+document.getElementById("history").innerHTML =
+"Failed to load history";
+
+return;
+
+}
+
+if(data.length===0){
+
+document.getElementById("history").innerHTML =
+"No analyses yet.";
+
+return;
+
+}
+
+let html="";
+
+data.forEach(item=>{
+
+html += `
+<div class="card">
+
+<div class="score">
+Score: ${item.score}/100
+</div>
+
+<p>${item.feedback}</p>
+
+<br>
+
+<small>
+${new Date(item.created_at).toLocaleString()}
+</small>
+
+</div>
+`;
+
+});
+
+document.getElementById("history").innerHTML =
+html;
+
+}
+
+loadHistory();
+
+</script>
+
+</body>
+</html>

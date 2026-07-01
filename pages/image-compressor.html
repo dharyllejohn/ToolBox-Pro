@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Compressor</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .box {
+      background: rgba(255,255,255,0.08);
+      padding: 20px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    input, button {
+      margin: 10px;
+      padding: 10px;
+    }
+
+    canvas {
+      display: none;
+    }
+
+    button {
+      cursor: pointer;
+      background: #2563eb;
+      border: none;
+      color: white;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-btn" onclick="goBack()">⬅ Back to Toolbox</button>
+
+  <h1>🖼️ Image Compressor</h1>
+
+  <div class="box">
+    <input type="file" id="upload" accept="image/*">
+    <br>
+    <button onclick="compressImage()">Compress Image</button>
+    <br>
+    <a id="download" style="display:none;">Download Image</a>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    function compressImage() {
+      const file = document.getElementById('upload').files[0];
+
+      if (!file) {
+        alert("Pumili ka muna ng image");
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const img = new Image();
+        img.src = event.target.result;
+
+        img.onload = function() {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // resize logic (compress)
+          const maxWidth = 800;
+          const scale = maxWidth / img.width;
+
+          canvas.width = maxWidth;
+          canvas.height = img.height * scale;
+
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // convert to compressed image
+          const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+
+          const downloadLink = document.getElementById('download');
+          downloadLink.href = compressedData;
+          downloadLink.download = "compressed.jpg";
+          downloadLink.style.display = "inline-block";
+          downloadLink.innerText = "⬇ Download Compressed Image";
+        };
+      };
+
+      reader.readAsDataURL(file);
+    }
+  </script>
+
+</body>
+</html>
